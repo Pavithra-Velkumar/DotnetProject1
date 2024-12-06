@@ -1,11 +1,19 @@
 // using Microsoft.OpenApi.Models;
 
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
+// Add services to the container.
+builder.Services.AddDbContext<DbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
-// builder.Services.AddControllers();
+builder.Services.AddControllers();
+builder.Services.AddLogging();
 // builder.Services.AddAuthorization(); 
 // builder.Services.AddAuthentication("Bearer")
 //     .AddJwtBearer("Bearer", options =>
@@ -14,6 +22,7 @@ var builder = WebApplication.CreateBuilder(args);
 //         options.RequireHttpsMetadata = false;
 //         options.Audience = "your-api";
 //     });
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 var app = builder.Build();
@@ -49,12 +58,12 @@ app.MapGet("/weatherforecast", () =>
 .WithName("GetWeatherForecast")
 .WithOpenApi();
 
-// app.UseAuthorization();
+app.UseAuthorization();
 // app.UseEndpoints(endpoints =>
 // {
 //     _ = endpoints.MapControllers();
 // });
-// app.MapControllers();
+app.MapControllers();
 app.Run();
 
 record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
